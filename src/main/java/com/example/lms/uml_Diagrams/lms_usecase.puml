@@ -1,0 +1,28 @@
+@startuml
+
+actor Student
+actor Instructor
+actor Admin
+
+rectangle "E-Learning_Platform System"{
+    usecase "Enroll in Course"
+    usecase "View Courses"
+    usecase "Create Course"
+    usecase "Manage Users"
+    usecase "Manage Courses"
+}
+
+Student --> "View Courses"
+Student --> "Enroll in Course"
+
+Instructor --> "Create Course"
+Instructor --> "View Courses"
+
+Admin --> "Manage Courses"
+Admin --> "Manage Users"
+
+"Enroll in Course" ..> "Check Prerequisites" : <<include>>
+"Enroll in Course" ..> "Send Confirmation Email" : <<extend>>
+
+
+@enduml

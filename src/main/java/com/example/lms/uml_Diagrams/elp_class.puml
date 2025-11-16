@@ -1,0 +1,217 @@
+@startuml
+title 📚 E-Learning Platform - UML Class Diagram
+
+'========================= GLOBAL STYLE =========================
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype polyline
+skinparam roundcorner 15
+skinparam dpi 150
+
+'--- Add space between packages ---
+skinparam package {
+    Padding 20
+    Margin 25
+    BackgroundColor #FAFAFA
+    BorderColor #999999
+}
+
+skinparam class {
+    BackgroundColor white
+    BorderColor #555555
+    FontSize 12
+    AttributeFontSize 11
+}
+
+skinparam titleFontSize 20
+skinparam titleFontColor #2B547E
+skinparam noteBackgroundColor #FFFFE0
+
+'========================= USER MANAGEMENT =========================
+package "👤 User Management" {
+    class User {
+        - id : int
+        - name : String
+        - age : int
+        - phoneNumber : String
+        - email : String
+
+        +register() : void
+        +login() : boolean
+        +logout() : void
+    }
+
+    class Student {
+        + enroll()
+        + pay()
+        + trackProgress()
+        + viewCourses()
+    }
+
+    class Instructor {
+        + createCourses()
+        + gradeStudents()
+    }
+
+    class Admin {
+        - courses : List
+        + manageCourses()
+        + manageUsers()
+    }
+
+    class ReportService {
+        + generateCourseReport()
+        + generateUserReport()
+    }
+
+    class PlatformManager {
+        + addUser(user : User)
+        + removeUser(userId : int)
+        + addCourse(course : Course)
+        + removeCourse(courseId : int)
+    }
+
+    User <|-- Student
+    User <|-- Instructor
+    User <|-- Admin
+
+    Admin --> PlatformManager : uses >
+    Admin --> ReportService : uses >
+}
+
+'------------------------- COURSE DOMAIN -------------------------
+package "Course Management" {
+    class Course {
+        - id : int
+        - title : String
+        - description : String
+        - category : String
+        - level : String
+        - duration : int
+        - price : double
+        - publishDate : LocalDate
+        - isPublished : boolean
+        - instructor : Instructor
+    }
+
+    class CourseContent {
+        - id : int
+        - title : String
+        - description : String
+        - order : int
+        - duration : double
+        - contentType : ContentType
+        - contentUrl : String
+    }
+
+    enum ContentType {
+        VIDEO
+        DOCUMENT
+        QUIZ
+        ARTICLE
+    }
+
+    Course *-- "many" CourseContent : contains >
+}
+
+'------------------------- ENROLLMENT & PROGRESS -------------------------
+package "Enrollment & Learning Progress" {
+    class Enrollment {
+        - id : int
+        - student : Student
+        - course : Course
+        - dateOfEnrollment : LocalDate
+        - isActive : boolean
+    }
+
+    class Progress {
+        - id : int
+        - enrollment : Enrollment
+        - courseContent : CourseContent
+        - progressStatus : ProgressStatus
+        - completionDate : LocalDate
+    }
+
+    enum ProgressStatus {
+        NOT_STARTED
+        IN_PROGRESS
+        COMPLETED
+    }
+
+    Student "1" -- "many" Enrollment : enrolls in >
+    Course "1" -- "many" Enrollment : has >
+    Enrollment *-- "many" Progress : tracks >
+    CourseContent "1" -- "many" Progress : < belongs to
+}
+
+'------------------------- PAYMENT & SUBSCRIPTION -------------------------
+package "Payments & Subscriptions" {
+    class Subscription {
+        - id : int
+        - user : User
+        - paymentStatus : PaymentStatus
+        - isActive : boolean
+        - type : SubscriptionType
+        - startDate : LocalDate
+        - endDate : LocalDate
+    }
+
+    class Payment {
+        - id : int
+        - user : User
+        - subscription : Subscription
+        - amount : double
+        - dateOfPayment : LocalDate
+        - status : PaymentStatus
+        - paymentMethod : PaymentMethod
+    }
+
+    enum PaymentStatus {
+        PAID
+        PENDING
+        FAILED
+    }
+
+    enum SubscriptionType {
+        ANNUAL
+        MONTHLY
+    }
+
+    enum PaymentMethod {
+        CREDIT_CARD
+        MOBILE_MONEY
+    }
+
+    User *-- "many" Subscription : owns >
+    User "1" -- "many" Payment : makes >
+    Subscription o-- "many" Payment : has >
+}
+
+'------------------------- REVIEW & CERTIFICATE -------------------------
+package "Feedback & Certification" {
+    class Review {
+        - id : int
+        - rating : int
+        - comment : String
+        - reviewDate : LocalDate
+        - student : Student
+        - course : Course
+    }
+
+    class Certificate {
+        - id : int
+        - student : Student
+        - course : Course
+        - issueDate : LocalDate
+        - certificateCode : String
+        - certificateUrl : String
+    }
+
+    Student o-- "many" Review : writes >
+    Course o-- "many" Review : receives >
+    Student *-- "many" Certificate : earns >
+    Course *-- "many" Certificate : awards >
+}
+
+@enduml

@@ -1,0 +1,100 @@
+'=================== UML CLASS RELATIONSHIP CHEAT SHEET ===================
+' 🎓 Examples from the E-Learning Platform project
+'
+' -------------------------------------------------------------------------
+' 1️⃣ Association ( -- or --> )
+' -------------------------------------------------------------------------
+' → Basic link between classes (uses / has a connection)
+' Syntax:   A -- B   or   A --> B
+'
+' Example:
+'   Student --> Course : enrolls in >
+'   Instructor --> Course : teaches >
+'   Course --> Review : receives >
+' Semantic meaning:
+'   "A Student enrolls in a Course"
+'   "An Instructor teaches a Course"
+'   "A Course receives Reviews"
+'
+' -------------------------------------------------------------------------
+' 2️⃣ Multiplicity
+' -------------------------------------------------------------------------
+' → Defines how many instances relate
+' Syntax:  "1", "0..1", "1..*", "*", "many"
+'
+' Example:
+'   Course "1" -- "many" CourseContent : contains >
+'   Student "1" -- "many" Enrollment : has >
+' Meaning:
+'   "One Course contains many CourseContents"
+'   "One Student has many Enrollments"
+'
+' -------------------------------------------------------------------------
+' 3️⃣ Aggregation ( o-- )
+' -------------------------------------------------------------------------
+' → Weak “has-a”; parts can exist without the whole
+' Symbol: hollow diamond (◇)
+' Syntax:  Whole o-- Part
+'
+' Example:
+'   Instructor o-- Course : teaches >
+' Meaning:
+'   "An Instructor teaches multiple Courses, but can exist without them"
+'
+' -------------------------------------------------------------------------
+' 4️⃣ Composition ( *-- )
+' -------------------------------------------------------------------------
+' → Strong “owns-a”; part is destroyed with the whole
+' Symbol: black diamond (◆)
+' Syntax:  Whole *-- Part
+'
+' Example:
+'   Course *-- CourseContent : contains >
+'   Enrollment *-- Progress : tracks >
+' Meaning:
+'   "A Course owns its CourseContents — if the course is deleted, contents are gone"
+'   "An Enrollment tracks multiple Progress records — delete enrollment, delete progress"
+'
+' -------------------------------------------------------------------------
+' 5️⃣ Inheritance / Generalization ( <|-- )
+' -------------------------------------------------------------------------
+' → “Is-a” relationship
+' Syntax:  Child <|-- Parent
+'
+' Example:
+'   Student <|-- User
+'   Instructor <|-- User
+' Meaning:
+'   "A Student is a User"
+'   "An Instructor is a User"
+'
+' -------------------------------------------------------------------------
+' 6️⃣ Dependency ( ..> )
+' -------------------------------------------------------------------------
+' → Temporary use (method, parameter, helper)
+' Symbol: dashed arrow
+'
+' Example:
+'   ReportService ..> User : uses >
+' Meaning:
+'   "ReportService uses User data temporarily to generate reports"
+'
+' -------------------------------------------------------------------------
+' 7️⃣ Realization ( <|.. )
+' -------------------------------------------------------------------------
+' → Class implements interface
+' Syntax:  Class <|.. Interface
+'
+' Example:
+'   PaymentService <|.. IPayment : implements >
+' Meaning:
+'   "PaymentService implements the IPayment interface"
+'
+' -------------------------------------------------------------------------
+' 🧭 Direction & Semantics:
+'   A --> B     ' A knows or acts on B
+'   A <-- B     ' B knows or acts on A
+'   A -- B      ' Both know each other
+'   Example: Student --> Enrollment : registers >
+'
+'=================== END OF UML RELATIONSHIP CHEAT SHEET ===================

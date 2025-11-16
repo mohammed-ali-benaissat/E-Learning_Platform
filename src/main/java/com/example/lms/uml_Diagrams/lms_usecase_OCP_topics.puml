@@ -1,0 +1,64 @@
+@startuml
+
+left to right direction
+
+skinparam usecase {
+  BackgroundColor LightBlue
+  BorderColor DarkBlue
+  ArrowColor DarkGreen
+  FontSize 12
+}
+actor Student
+actor Instructor
+actor Admin
+
+rectangle "Learning Management System" {
+    usecase "Enroll in Course" as UC1
+    usecase "View Courses" as UC2
+    usecase "Create Course" as UC3
+    usecase "Manage Users" as UC4
+    usecase "Manage Courses" as UC5
+    usecase "Check Prerequisites" as UC6
+    usecase "Send Confirmation Email" as UC7
+
+    note right of UC1
+      Practicing: Exceptions, Records, Collections, Streams, Flow Control, instanceof
+    end note
+
+    note right of UC2
+      Practicing: Collections, Streams, Flow Control
+    end note
+
+    note right of UC3
+      Practicing: Classes, Enums, Immutability, Collections, Methods
+    end note
+
+    note right of UC4
+      Practicing: Exceptions, Collections, Flow Control, Logging
+    end note
+
+    note right of UC5
+      Practicing: Classes, Collections, Flow Control
+    end note
+
+    note right of UC6
+      Practicing: Flow Control, Methods
+    end note
+
+    note right of UC7
+      Practicing: I/O, Strings, Logging, Date-Time
+    end note
+}
+
+Student --> UC1
+Student --> UC2
+
+Instructor --> UC3
+Instructor --> UC2
+
+Admin --> UC4
+Admin --> UC5
+
+UC1 ..> UC6 : <<include>>
+UC1 ..> UC7 : <<extend>>
+@enduml
