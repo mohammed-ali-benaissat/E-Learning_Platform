@@ -3,7 +3,7 @@ package com.example.lms.model;
 
 
 public final class User {
-    private Long id;
+    private final Long id;
     private final String name;
     private final int age;
     private final String phoneNumber;
