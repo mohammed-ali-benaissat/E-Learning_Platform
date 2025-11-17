@@ -1,0 +1,35 @@
+git config --global user.name : Set Git username
+git config --global user.email : Set Git email
+git init : Initialize a new Git repository
+git remote add origin <url> : Add a remote repository
+git remote -v : List remotes
+git clone <url> : Clone a remote repository
+git status : Show current status of files
+git branch : List all branches
+git branch <branch> : Create a new branch
+git checkout <branch> : Switch to a branch
+git checkout -b <branch> : Create and switch to a new branch
+git branch -d <branch> : Delete a local branch
+git push origin --delete <branch> : Delete a remote branch
+git add . : Stage all changes
+git add <file> : Stage specific file
+git commit -m "<message>" : Commit staged changes
+git push : Push current branch
+git push -u origin <branch> : Push branch and set upstream
+git pull : Pull latest changes from remote
+git pull origin <branch> : Pull a specific branch
+git merge <branch> : Merge branch into current
+git merge --abort : Abort merge
+git restore . : Discard uncommitted changes
+git reset --hard : Reset to last commit, discard changes
+git reset --soft HEAD~1 : Undo last commit but keep changes
+git reset --hard HEAD~1 : Undo last commit and discard changes
+git reset --hard origin/<branch> : Reset local branch to match remote
+git stash : Save uncommitted changes
+git stash apply : Apply stashed changes
+git stash drop : Delete last stash
+git log : Show commit history
+git log --oneline : Show commit history in one line
+git diff : Show differences between commits/files
+git remote set-url origin <url> : Change remote URL
+git remote remove origin : Remove remote
