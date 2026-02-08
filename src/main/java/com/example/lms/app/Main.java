@@ -34,6 +34,8 @@ public class Main {
                 .password("secret")
                 .build();
 
+        System.out.println("👤 Student created: " + student.getName() + ", Age: " + student.getAge() + ", Email: " + student.getEmail());
+
         Instructor instructor = new Instructor.Builder()
                 .id(2)
                 .name("Instructor One")
@@ -50,6 +52,8 @@ public class Main {
                 .duration(30)
                 .instructor(instructor)
                 .build();
+
+        System.out.println("📚 Course created: " + course.getTitle() + " by Instructor " + course.getInstructor().getName());
 
         CourseContent c1 = new CourseContent.Builder()
                 .id(1)
@@ -84,11 +88,12 @@ public class Main {
                 .course(course)
                 .build();
 
-
         List<CourseContent> contents = List.of(c1, c2, c3);
+        System.out.println("📝 Course content created: " + contents.size() + " lessons");
 
         // ---------------- PAYMENT ----------------
         Payment payment = paymentService.processPayment(1, student, 100.0);
+        System.out.println("💳 Payment processed for " + student.getName() + ": " + (payment.isPaid() ? "SUCCESS" : "FAILED"));
 
         if (!payment.isPaid()) {
             throw new IllegalStateException("Payment failed");
@@ -102,6 +107,7 @@ public class Main {
                 LocalDate.now()
         );
         subscriptionRepo.save(subscription);
+        System.out.println("📅 Subscription created: " + subscription.getType() + " for student " + student.getName());
 
         // ---------------- ENROLLMENT ----------------
         Enrollment enrollment = enrollmentService.enroll(
@@ -111,6 +117,7 @@ public class Main {
                 enrollmentRepo.findAll()
         );
         enrollmentRepo.save(enrollment);
+        System.out.println("✅ Enrollment completed: " + student.getName() + " enrolled in " + course.getTitle());
 
         // ---------------- PROGRESS ----------------
         for (CourseContent content : contents) {
@@ -119,6 +126,7 @@ public class Main {
                     content,
                     progressRepo.findAll()
             );
+            System.out.println("📖 Progress updated: " + student.getName() + " completed " + content.getTitle());
         }
 
         boolean completed = progressService.isCourseCompleted(
@@ -137,7 +145,8 @@ public class Main {
             certificateRepo.save(certificate);
 
             System.out.println("🎉 COURSE COMPLETED!");
-            System.out.println("Certificate Code: " + certificate.getCertificateCode());
+            System.out.println("📜 Certificate issued to " + student.getName() + " for course " + course.getTitle());
+            System.out.println("🔑 Certificate Code: " + certificate.getCertificateCode());
         }
     }
 }
