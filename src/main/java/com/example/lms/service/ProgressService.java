@@ -1,19 +1,27 @@
 package com.example.lms.service;
 
-import com.example.lms.model.*;
+import com.example.lms.model.CourseContent;
+import com.example.lms.model.Enrollment;
+import com.example.lms.model.Progress;
+import com.example.lms.model.ProgressStatus;
 
 import java.util.List;
 
 public class ProgressService {
 
-    public void updateProgress(
+    /**
+     * Update progress for a specific content
+     */
+    public Progress updateProgress(
             Enrollment enrollment,
             CourseContent content,
             List<Progress> progresses) {
 
+        // find existing progress
         Progress progress = findProgress(enrollment, content, progresses);
 
         if (progress == null) {
+            // create progress if it does not exist
             progress = new Progress(
                     generateId(),
                     enrollment,
@@ -22,45 +30,46 @@ public class ProgressService {
             progresses.add(progress);
         }
 
-        // domain-driven state changes
-        if (progress.getStatus() == ProgressStatus.NOT_STARTED) {
-            progress.start();
-        }
-
+        // update state
+        progress.start();
         progress.complete();
 
-        if (isCourseCompleted(enrollment, progresses)) {
-            signalCourseCompleted(enrollment);
-        }
+        return progress;
     }
+
+    /**
+     * Check if course is completed
+     */
+    public boolean isCourseCompleted(
+            Enrollment enrollment,
+            List<CourseContent> contents,
+            List<Progress> progresses) {
+
+        for (CourseContent content : contents) {
+            Progress progress = findProgress(enrollment, content, progresses);
+
+            if (progress == null ||
+                    progress.getStatus() != ProgressStatus.COMPLETED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // ----------------- helpers -----------------
 
     private Progress findProgress(
             Enrollment enrollment,
             CourseContent content,
             List<Progress> progresses) {
 
-        for (Progress p : progresses) {
-            if (p.getEnrollment().equals(enrollment)
-                    && p.getCourseContent().equals(content)) {
-                return p;
+        for (Progress progress : progresses) {
+            if (progress.getEnrollment().equals(enrollment)
+                    && progress.getCourseContent().equals(content)) {
+                return progress;
             }
         }
         return null;
-    }
-
-    private boolean isCourseCompleted(
-            Enrollment enrollment,
-            List<Progress> progresses) {
-
-        return progresses.stream()
-                .filter(p -> p.getEnrollment().equals(enrollment))
-                .allMatch(Progress::isCompleted);
-    }
-
-    private void signalCourseCompleted(Enrollment enrollment) {
-        System.out.println(
-                "Course completed for enrollment: " + enrollment.getId()
-        );
     }
 
     private int generateId() {

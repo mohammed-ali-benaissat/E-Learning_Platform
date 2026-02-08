@@ -1,80 +1,143 @@
 package com.example.lms.app;
 
-import com.example.lms.model.Admin;
-import com.example.lms.model.ContentType;
-import com.example.lms.model.Course;
-import com.example.lms.model.CourseContent;
-import com.example.lms.model.Instructor;
-import com.example.lms.model.Student;
-import com.example.lms.model.User;
-import java.time.LocalDate;
+import com.example.lms.model.*;
+import com.example.lms.repo.*;
+import com.example.lms.service.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class Main {
+
     public static void main(String[] args) {
-        User student = new Student.Builder()
+
+        // ---------------- REPOSITORIES ----------------
+        EnrollmentRepository enrollmentRepo = new EnrollmentRepository();
+        ProgressRepository progressRepo = new ProgressRepository();
+        CertificateRepository certificateRepo = new CertificateRepository();
+        SubscriptionRepository subscriptionRepo = new SubscriptionRepository();
+
+        // ---------------- SERVICES ----------------
+        PaymentService paymentService = new PaymentService();
+        SubscriptionService subscriptionService = new SubscriptionService();
+        EnrollmentService enrollmentService = new EnrollmentService();
+        ProgressService progressService = new ProgressService();
+        CertificationService certificateService = new CertificationService();
+
+        // ---------------- USERS ----------------
+        Student student = new Student.Builder()
                 .id(1)
-                .name("Alice")
-                .email("alice@example.com")
-                .password("pass123")
-                .age(20)
-                .phoneNumber("123456789")
-                .enrolledCourses(List.of("Java SE 17"))
+                .name("Amine")
+                .age(22)
+                .email("amine@email.com")
+                .phoneNumber("0600000000")
+                .password("secret")
                 .build();
 
         Instructor instructor = new Instructor.Builder()
                 .id(2)
-                .name("Bob")
-                .email("bob@example.com")
-                .password("securePass")
-                .coursesCreated(List.of("Advanced Java"))
+                .name("Instructor One")
+                .age(40)
+                .email("inst@email.com")
+                .phoneNumber("0700000000")
+                .password("secret")
                 .build();
 
-        Admin admin = new Admin.Builder()
-                .id(3)
-                .name("Carol")
-                .email("carol@example.com")
-                .password("adminPass")
-                .managedUsers(List.of("Alice", "Bob"))
-                .build();
-        
+        // ---------------- COURSE ----------------
         Course course = new Course.Builder()
-        .id(1)
-        .title("Java SE 17")
-        .description("Complete Java fundamentals")
-        .category("Backend")
-        .level("Beginner")
-        .duration(40)
-        .price(99.0)
-        .published(true)
-        .instructor(instructor)
-        .publishDate(LocalDate.now())
-        .build();
+                .id(100)
+                .title("Java Fundamentals")
+                .duration(30)
+                .instructor(instructor)
+                .build();
 
-        
-        CourseContent content = new CourseContent.Builder()
-        .id(1)
-        .title("Introduction to Java")
-        .order(1)
-        .duration(15)
-        .contentType(ContentType.VIDEO)
-        .contentUrl("https://video-url")
-        .course(course)
-        .build();
+        CourseContent c1 = new CourseContent.Builder()
+                .id(1)
+                .title("Intro")
+                .description("Course introduction")
+                .order(1)
+                .duration(10)
+                .contentType(ContentType.VIDEO)
+                .contentUrl("intro.mp4")
+                .course(course)
+                .build();
 
-        // Actions
-        ((Student) student).enroll("Spring Boot Basics");
-        instructor.createCourse("Microservices");
-        admin.manageUser("Alice");
+        CourseContent c2 = new CourseContent.Builder()
+                .id(2)
+                .title("OOP")
+                .description("Object Oriented Programming")
+                .order(2)
+                .duration(15)
+                .contentType(ContentType.VIDEO)
+                .contentUrl("oop.mp4")
+                .course(course)
+                .build();
 
-        // Login/Logout
-        student.login();
-        instructor.login();
-        admin.login();
+        CourseContent c3 = new CourseContent.Builder()
+                .id(3)
+                .title("Streams")
+                .description("Java Streams API")
+                .order(3)
+                .duration(20)
+                .contentType(ContentType.VIDEO)
+                .contentUrl("streams.mp4")
+                .course(course)
+                .build();
+
+
+        List<CourseContent> contents = List.of(c1, c2, c3);
+
+        // ---------------- PAYMENT ----------------
+        Payment payment = paymentService.processPayment(1, student, 100.0);
+
+        if (!payment.isPaid()) {
+            throw new IllegalStateException("Payment failed");
+        }
+
+        // ---------------- SUBSCRIPTION ----------------
+        Subscription subscription = subscriptionService.createSubscription(
+                1,
+                student,
+                SubscriptionType.MONTHLY,
+                LocalDate.now()
+        );
+        subscriptionRepo.save(subscription);
+
+        // ---------------- ENROLLMENT ----------------
+        Enrollment enrollment = enrollmentService.enroll(
+                student,
+                course,
+                subscription,
+                enrollmentRepo.findAll()
+        );
+        enrollmentRepo.save(enrollment);
+
+        // ---------------- PROGRESS ----------------
+        for (CourseContent content : contents) {
+            progressService.updateProgress(
+                    enrollment,
+                    content,
+                    progressRepo.findAll()
+            );
+        }
+
+        boolean completed = progressService.isCourseCompleted(
+                enrollment,
+                contents,
+                progressRepo.findAll()
+        );
+
+        // ---------------- CERTIFICATE ----------------
+        if (completed) {
+            Certificate certificate = certificateService.issueCertificate(
+                    student,
+                    course,
+                    certificateRepo.findAll()
+            );
+            certificateRepo.save(certificate);
+
+            System.out.println("🎉 COURSE COMPLETED!");
+            System.out.println("Certificate Code: " + certificate.getCertificateCode());
+        }
     }
-    
-    
-    
-
 }
